@@ -4,7 +4,11 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+anyhow = "1.0.98"
 askama = "0.14.0"
 axum = "0.8.4"
+prometheus = "0.14.0"
 sqlx = "0.8.6"
 tokio = { version = "1.46.1", features = ["macros", "rt-multi-thread"] }
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter", "fmt", "json"] }
