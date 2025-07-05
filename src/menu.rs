@@ -19,7 +19,7 @@ fn html_response(s: askama::Result<String>) -> Result<Html<String>, StatusCode> 
         Ok(html) => Ok(Html::from(html)),
         Err(err) => {
             error!("{err}");
-            Err(StatusCode::NOT_FOUND)
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }
 }
