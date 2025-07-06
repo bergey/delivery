@@ -1,6 +1,10 @@
+use crate::prelude::*;
+
 use askama::Template;
+use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::Html;
+use sqlx::types::BigDecimal;
 use tracing::error;
 
 #[derive(Template)]
@@ -12,26 +16,22 @@ struct MenuTemplate<'a> {
 
 struct MenuItem {
     name: String,
-    price: f64, // should be decimal?
+    price: BigDecimal,
 }
 
-pub async fn menu() -> Result<Html<String>, StatusCode> {
+pub async fn menu(State(pools): Pools) -> Result<Html<String>, StatusCode> {
+    let restaurant_id = 1; // TODO url param
+    let menu_items = sqlx::query_as!(
+        MenuItem,
+        "select name, price from menu_items where restaurant_id = $1",
+        restaurant_id
+    )
+    .fetch_all(&pools.postgres)
+    .await.unwrap(); // TODO axum handler for anyhow error
+
     let menu = MenuTemplate {
         name: "Spaceways",
-        menu_items: vec![
-            MenuItem {
-                name: "Peanut Noodles".to_owned(),
-                price: 10.5,
-            },
-            MenuItem {
-                name: "Kimchi".to_owned(),
-                price: 5.00,
-            },
-            MenuItem {
-                name: "Shawarma".to_owned(),
-                price: 17.50,
-            },
-        ],
+        menu_items,
     };
     html_response(menu.render())
 }
