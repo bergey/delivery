@@ -1,0 +1,22 @@
+# https://github.com/felipewom/docker-compose-postgres
+
+version: '3'
+
+services:
+  database:
+    image: 'postgres:latest'
+    ports:
+      - 15432:5432
+    environment:
+      POSTGRES_DB: delivery
+    env_file:
+      - .env
+    networks:
+      - postgres-network
+    volumes:
+      - ${PWD}/db-data/:/var/lib/postgresql/data/
+      - ${PWD}/sql/000_init.sql:/docker-entrypoint-initdb.d/init.sql
+
+networks:
+  postgres-network:
+    driver: bridge
