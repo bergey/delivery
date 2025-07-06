@@ -31,5 +31,5 @@ pub async fn menu(State(pools): Pools) -> Result<Html<String>, Error> {
         name: "Spaceways",
         menu_items,
     };
-    Ok(Html::from(menu.render()?)) // TODO ergonomics
+    menu.render()?.as_html()
 }

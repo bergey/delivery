@@ -1,5 +1,6 @@
 use axum::extract::State;
 use axum::http::StatusCode;
+use axum::response::Html;
 use axum::response::{IntoResponse, Response};
 use sqlx::PgPool;
 use tracing::error;
@@ -33,5 +34,15 @@ where
 {
     fn from(err: E) -> Self {
         Self(err.into())
+    }
+}
+
+pub trait AsHtml {
+    fn as_html(self) -> Result<Html<String>, Error>;
+}
+
+impl AsHtml for String {
+    fn as_html(self) -> Result<Html<String>, Error> {
+        Ok(Html::from(self))
     }
 }
