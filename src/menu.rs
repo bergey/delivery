@@ -7,10 +7,32 @@ use tracing::error;
 #[template(path = "menu.html")]
 struct MenuTemplate<'a> {
     name: &'a str,
+    menu_items: Vec<MenuItem>,
+}
+
+struct MenuItem {
+    name: String,
+    price: f64, // should be decimal?
 }
 
 pub async fn menu() -> Result<Html<String>, StatusCode> {
-    let menu = MenuTemplate { name: "Spaceways" };
+    let menu = MenuTemplate {
+        name: "Spaceways",
+        menu_items: vec![
+            MenuItem {
+                name: "Peanut Noodles".to_owned(),
+                price: 10.5,
+            },
+            MenuItem {
+                name: "Kimchi".to_owned(),
+                price: 5.00,
+            },
+            MenuItem {
+                name: "Shawarma".to_owned(),
+                price: 17.50,
+            },
+        ],
+    };
     html_response(menu.render())
 }
 

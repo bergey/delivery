@@ -7,8 +7,9 @@
     <body>
         <p>{{name}}</p>
         <ul>
-            <li>Peanut Noodles</li>
-            <li>Kimchi</li>
+            {% for item in menu_items %}
+              <li>{{item.name}}</li>
+            {% endfor %}
         </ul>
     </body>
 </html>
