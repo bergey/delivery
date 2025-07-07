@@ -17,6 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     };
 
     let app = Router::new()
+        .route("/", get(delivery::restaurant_search::restaurant_search))
         .route("/menu/{restaurant_id}", get(delivery::menu::menu))
         .with_state(connection_pools);
 

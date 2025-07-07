@@ -2,13 +2,12 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8"/>
-        <title>{{name}}</title>
+        <title>Restaurants</title>
     </head>
     <body>
-        <p>{{name}}</p>
         <ul>
-            {% for item in menu_items %}
-              <li>{{item.name}}</li>
+            {% for r in restaurants %}
+              <li><a href="/menu/{{r.id}}">{{r.name}}</a></li>
             {% endfor %}
         </ul>
     </body>

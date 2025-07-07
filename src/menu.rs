@@ -3,8 +3,6 @@ use crate::prelude::*;
 use askama::Template;
 use axum::extract::Path;
 use axum::extract::State;
-use axum::response::Html;
-use serde::{Deserialize, Serialize};
 use sqlx::types::BigDecimal;
 
 #[derive(Template)]
@@ -22,7 +20,7 @@ struct MenuItem {
 pub async fn menu(
     State(pools): Pools,
     Path(restaurant_id): Path<RestaurantId>,
-) -> Result<Html<String>, Error> {
+) -> Page {
     let o_name = restaurant_name(pools.clone(), restaurant_id).await?;
     let name = unwrap_or_404(o_name)?;
     let menu_items = sqlx::query_as!(
@@ -31,16 +29,14 @@ pub async fn menu(
         restaurant_id as RestaurantId
     )
     .fetch_all(&pools.postgres)
-    .await
-    .unwrap();
+    .await?;
 
-    let menu = MenuTemplate { name: &name, menu_items };
+    let menu = MenuTemplate {
+        name: &name,
+        menu_items,
+    };
     menu.render()?.as_html()
 }
-
-#[derive(Serialize, Deserialize, sqlx::Type, Clone, Copy)]
-#[sqlx(transparent)]
-pub struct RestaurantId(i32);
 
 async fn restaurant_name(
     pools: ConnectionPools,
