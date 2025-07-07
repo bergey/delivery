@@ -15,16 +15,15 @@ pub struct ConnectionPools {
 // TODO trait to make State wrapper less intrusive?
 
 // https://github.com/tokio-rs/axum/blob/main/examples/anyhow-error-response/src/main.rs
-pub struct Error(anyhow::Error);
+pub struct Error {
+    error: anyhow::Error,
+    status_code: StatusCode,
+}
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-        error!("{}", self.0);
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Something went wrong"),
-        )
-            .into_response()
+        error!("{}", self.error);
+        (self.status_code, format!("Something went wrong")).into_response()
     }
 }
 
@@ -33,7 +32,10 @@ where
     E: Into<anyhow::Error>,
 {
     fn from(err: E) -> Self {
-        Self(err.into())
+        Self {
+            error: err.into(),
+            status_code: StatusCode::INTERNAL_SERVER_ERROR,
+        }
     }
 }
 
@@ -45,4 +47,11 @@ impl AsHtml for String {
     fn as_html(self) -> Result<Html<String>, Error> {
         Ok(Html::from(self))
     }
+}
+
+pub fn unwrap_or_404<T>(opt: Option<T>) -> Result<T, Error> {
+    opt.ok_or(Error {
+        error: anyhow::anyhow!("unwrapped None to 404"),
+        status_code: StatusCode::NOT_FOUND,
+    })
 }

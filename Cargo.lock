@@ -315,6 +315,7 @@ dependencies = [
  "askama",
  "axum",
  "prometheus",
+ "serde",
  "sqlx",
  "tokio",
  "tracing",

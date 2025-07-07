@@ -17,7 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     };
 
     let app = Router::new()
-        .route("/menu", get(delivery::menu::menu))
+        .route("/menu/{restaurant_id}", get(delivery::menu::menu))
         .with_state(connection_pools);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await?;
